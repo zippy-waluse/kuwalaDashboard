@@ -13,7 +13,7 @@ export const useGetDashboardData = (month?: string) => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const usersResult = await fetchUsers(month);
+        const usersResult = await fetchUsers();
         const foodItemsResult = await fetchCategories();
 
         setMetrics({
