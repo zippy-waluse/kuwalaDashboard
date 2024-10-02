@@ -53,7 +53,7 @@ const ActiveUsersChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data: UserData[] = await fetchUsers(month); 
+        const data: UserData[] = await fetchUsers(); 
         const processedData = processChartData(data);
         setChartData(processedData);
       } catch (error) {

@@ -7,7 +7,6 @@ import * as yup from "yup";
 import { userLogin } from "../utils/userLogin";
 import router from "next/router";
 import Link from "next/link";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const loginSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
