@@ -1,5 +1,3 @@
-
-
 const usersApi =' /api/numberUsers/'; 
 
 export const fetchUsers= async () => {
