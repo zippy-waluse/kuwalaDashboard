@@ -32,7 +32,7 @@ const SignUp = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors},
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(signUpSchema),
   });
@@ -61,30 +61,24 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
+    <div className="flex items-center justify-center min-h-screen bg-white ml-[260px]">
       <div className="bg-[#F5F5F5] w-full h-screen flex flex-col md:flex-row">
-        <div className="flex items-center justify-center p-8">
-          <Image
-            src="/images/form.png"
-            alt="Sign Up Illustration"
-            width={900}
-            height={700}
-            className="  "
+        <div className="flex items-center justify-center">
+          <Image 
+            src="/images/login-illustration.png" 
+            alt="Sign Up Illustration" 
+            width={800}  
+            height={300}
+            className="w-auto h-auto object-cover"
           />
         </div>
-        <div className="w-full md:w-1/2 flex justify-center items-center p-8">
+        <div className="w-full md:w-2/5 flex justify-center items-center p-8">
           <div className="w-full max-w-md">
-            <h1 className="text-5xl font-bold text-[#883418] mb-6 text-center">
-              Sign Up
-            </h1>
-            <p className="text-black text-center mb-6 text-2xl">
-              Welcome to DishHub
-            </p>
+            <h1 className="text-[40px] text-center font-bold text-[#883418] mb-8 ml-32">Sign Up</h1>
+            <p className="text-black text-center mt-4 text-[20px] mb-8 ml-36">Welcome to DishHub</p>
 
             {successMessage && (
-              <p className="text-green-500 text-sm mt-2 mb-4">
-                {successMessage}
-              </p>
+              <p className="text-green-500 text-sm mt-2 mb-4">{successMessage}</p>
             )}
             {apiError && (
               <p className="text-red-500 text-sm mt-2 mb-4">{apiError}</p>
@@ -99,9 +93,7 @@ const SignUp = () => {
                   className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
                 />
                 {errors.first_name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.first_name.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.first_name.message}</p>
                 )}
               </div>
               <div>
@@ -112,9 +104,7 @@ const SignUp = () => {
                   className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900 "
                 />
                 {errors.last_name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.last_name.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.last_name.message}</p>
                 )}
               </div>
               <div>
@@ -125,9 +115,7 @@ const SignUp = () => {
                   className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
                 />
                 {errors.username && (
-                  <p className="text-red-500 text-sm mt-1 ">
-                    {errors.username.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1 ">{errors.username.message}</p>
                 )}
               </div>
               <div>
@@ -138,35 +126,32 @@ const SignUp = () => {
                   className="w-[148%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
+                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
                 )}
               </div>
-              <div className="relative w-[165%]">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password")}
-                  placeholder="Password"
-                  className="w-[90%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900 pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                >
-                  {showPassword ? (
-                    <FaEyeSlash className="h-5 w-5 text-gray-500" />
-                  ) : (
-                    <FaEye className="h-5 w-5 text-gray-500" />
-                  )}
-                </button>
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
+              <div className="relative w-[149%]">
+  <input
+    type={showPassword ? "text" : "password"}
+    {...register("password")}
+    placeholder="Password"
+    className="w-full h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900 pr-12" 
+  />
+  <button
+    type="button"
+    onClick={togglePasswordVisibility}
+    className="absolute inset-y-0 right-4 flex items-center text-sm leading-5"
+  >
+    {showPassword ? (
+      <FaEyeSlash className="h-5 w-5 text-gray-500" />
+    ) : (
+      <FaEye className="h-5 w-5 text-gray-500" />
+    )}
+  </button>
+  {errors.password && (
+    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+  )}
+</div>
+
               <button
                 type="submit"
                 className="w-[150%] bg-[#883418] text-[#F8A11B] font-extrabold text-3xl py-5 mt-7 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] hover:bg-[#6B3E11] transition-colors"
@@ -175,13 +160,7 @@ const SignUp = () => {
               </button>
             </form>
             <p className="text-center text-2xl text-black mt-8 ml-24">
-              Already have an account?{" "}
-              <a
-                href="/login"
-                className="text-[#883418] font-bold hover:underline"
-              >
-                Login
-              </a>
+              Already have an account? <a href="/login" className="text-[#883418] font-bold hover:underline">Login</a>
             </p>
           </div>
         </div>
