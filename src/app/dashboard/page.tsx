@@ -1,5 +1,6 @@
 
 
+
 'use client';
 import React from 'react';
 import { useGetDashboardData } from '../hooks/useGetUsers';
@@ -30,10 +31,10 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="flex justify-between mt-8">
-        <div className="w-full mr-4">
+        <div className="w-[70%] max-w-[800px] mr-4">
           <FoodItemsChart />
         </div>
-        <div className="w-full">
+        <div className="w-[70%] max-w-[800px]">
           <ActiveUsersChart />
         </div>
       </div>
