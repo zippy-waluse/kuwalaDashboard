@@ -12,7 +12,6 @@ import {
   Legend,
 } from "chart.js";
 import { fetchCategories } from "@/app/utils/fetchCategories";
-
 ChartJS.register(
   LinearScale,
   CategoryScale,
@@ -21,14 +20,12 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 interface CategoryData {
   id: number;
   name: string;
   quantity: number;
   category: number;
 }
-
 interface ChartData {
   labels: string[];
   datasets: {
@@ -39,7 +36,6 @@ interface ChartData {
     borderWidth: number;
   }[];
 }
-
 const fetchFoodItemsByCategory = async () => {
   try {
     const response = await fetchCategories();
@@ -49,7 +45,6 @@ const fetchFoodItemsByCategory = async () => {
     return [];
   }
 };
-
 const FoodItemsChart = () => {
   const [chartData, setChartData] = useState<ChartData>({
     labels: [],
@@ -64,7 +59,6 @@ const FoodItemsChart = () => {
     ],
   });
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -84,17 +78,14 @@ const FoodItemsChart = () => {
     };
     fetchData();
   }, []);
-
   const processChartData = (data: CategoryData[]) => {
     const categoryMap = data.reduce((acc, item) => {
       const categoryName = item.category;
       acc[categoryName] = (acc[categoryName] || 0) + item.quantity;
       return acc;
     }, {} as Record<string, number>);
-
     const categoryNames = Object.keys(categoryMap);
     const itemCounts = Object.values(categoryMap);
-
     return {
       labels: categoryNames,
       datasets: [
@@ -108,7 +99,6 @@ const FoodItemsChart = () => {
       ],
     };
   };
-
   const getDefaultChartData = () => {
     return {
       labels: ["No Categories Available"],
@@ -123,7 +113,6 @@ const FoodItemsChart = () => {
       ],
     };
   };
-
   const options: ChartOptions<"bar"> = {
     plugins: {
       legend: {
@@ -131,7 +120,7 @@ const FoodItemsChart = () => {
         position: "top",
         labels: {
           font: {
-            size: 12,
+            size: 10,
           },
         },
       },
@@ -139,7 +128,7 @@ const FoodItemsChart = () => {
         display: true,
         text: "No. of Food Items by Category",
         font: {
-          size: 20,
+          size: 16,
         },
         color: "#7C3A19",
       },
@@ -150,12 +139,12 @@ const FoodItemsChart = () => {
           display: true,
           text: "Categories",
           font: {
-            size: 16,
+            size: 12,
           },
         },
         ticks: {
           font: {
-            size: 10,
+            size: 8,
           },
         },
       },
@@ -164,28 +153,23 @@ const FoodItemsChart = () => {
           display: true,
           text: "No. of Food Items",
           font: {
-            size: 16,
+            size: 12,
           },
         },
         ticks: {
           font: {
-            size: 10,
+            size: 8,
           },
         },
         beginAtZero: true,
       },
     },
   };
-
   if (isLoading) return <div>Loading chart...</div>;
-
   return (
-    <div className="chart-container 2xl:w-[950px] 2xl:h-[800px] xl:h-[1000px] xl:w-[600px] 2xl:pt-[7px] nest-hub:h-[900px] nest-hub-max:h-[900px] nest-hub:ml-1 nest-hub-max:ml-0">
-  <Bar data={chartData} options={options} />
-</div>
-
+    <div className="chart-container 2xl:w-[700px] 2xl:h-[500px] xl:h-[450px] xl:w-[600px] lg:h-[400px] lg:w-[500px] md:h-[350px] md:w-[400px] sm:h-[300px] sm:w-[350px] nesthub:w-[280px] ipa:w-[250px]">
+      <Bar data={chartData} options={options} />
+    </div>
   );
 };
-
 export default FoodItemsChart;
-

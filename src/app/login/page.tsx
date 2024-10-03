@@ -1,4 +1,3 @@
-
 "use client";
 import { useState } from "react";
 import Image from "next/image";
@@ -6,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { userLogin } from "../utils/userLogin";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 const loginSchema = yup.object().shape({
   username: yup.string().required("Username is required"),
@@ -29,6 +29,7 @@ const customStyles = {
   },
 };
 export default function Login() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -49,6 +50,8 @@ export default function Login() {
     } else {
       setSuccessMessage("Login successful!");
       setErrorMessage("");
+      // Navigate to dashboard after successful login
+      setTimeout(() => router.push("/dashboard"), 1500);
     }
   };
   return (
@@ -107,18 +110,16 @@ export default function Login() {
                 <p className="text-red-500 mt-2">{errors.password.message}</p>
               )}
             </div>
-            <Link href="/dashboard">
-              <button
-                type="submit"
-                className={`w-full max-w-[600px] text-[#F8A11B] font-extrabold text-[25px] py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:ring-opacity-50 mt-6 ${
-                  isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-                style={customStyles.loginButton}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </button>
-            </Link>
+            <button
+              type="submit"
+              className={`w-full max-w-[600px] text-[#F8A11B] font-extrabold text-[25px] py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:ring-opacity-50 mt-6 ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              style={customStyles.loginButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </button>
           </form>
           <p className="text-center text-[20px] text-black mt-8">
             Do not have an account?{" "}

@@ -1,13 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { userSignup } from "@/app/utils/postUsers";
-import { useRouter } from "next/navigation";
-
+import Link from "next/link";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+interface SignUpFormData {
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+  password: string;
+}
 const signUpSchema = yup.object().shape({
   first_name: yup.string().required("First name is required"),
   last_name: yup.string().required("Last name is required"),
@@ -18,155 +24,186 @@ const signUpSchema = yup.object().shape({
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
 });
-
-interface FormData {
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
-  password: string;
-}
-
-const SignUp = () => {
-  const router = useRouter();
+const customStyles = {
+  signUpButton: {
+    backgroundColor: "#883418",
+    "&:hover": {
+      backgroundColor: "#6B3E11",
+    },
+  },
+  brownText: {
+    color: "#883418",
+    "&:hover": {
+      color: "#6B3E11",
+    },
+  },
+};
+export default function SignUp() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpFormData>({
     resolver: yupResolver(signUpSchema),
   });
-  const [apiError, setApiError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [showPassword, setPasswordVisible] = useState(false);
-
-  const onSubmit = async (data: FormData) => {
-    console.log("SignUp submitted", data);
-    setApiError(null);
-    setSuccessMessage(null);
-
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const onSubmit = async (data: SignUpFormData) => {
     const response = await userSignup(data);
-
     if (response.error) {
-      setApiError(response.error);
-      console.log("Registration failed:", response.error);
+      setErrorMessage(response.error);
+      setSuccessMessage("");
     } else {
       setSuccessMessage("Account created successfully!");
-      setTimeout(() => router.push("/login"), 2000);
+      setErrorMessage("");
     }
   };
-
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!showPassword);
+    setShowPassword(!showPassword);
   };
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white ml-[260px]">
-      <div className="bg-[#F5F5F5] w-full h-screen flex flex-col md:flex-row">
-        <div className="flex items-center justify-center">
-          <Image 
-            src="/images/login-illustration.png" 
-            alt="Sign Up Illustration" 
-            width={800}  
-            height={300}
-            className="w-auto h-auto object-cover"
-          />
-        </div>
-        <div className="w-full md:w-2/5 flex justify-center items-center p-8">
-          <div className="w-full max-w-md">
-            <h1 className="text-[40px] text-center font-bold text-[#883418] mb-8 ml-32">Sign Up</h1>
-            <p className="text-black text-center mt-4 text-[20px] mb-8 ml-36">Welcome to DishHub</p>
-
-            {successMessage && (
-              <p className="text-green-500 text-sm mt-2 mb-4">{successMessage}</p>
-            )}
-            {apiError && (
-              <p className="text-red-500 text-sm mt-2 mb-4">{apiError}</p>
-            )}
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  {...register("first_name")}
-                  placeholder="First Name"
-                  className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
-                />
-                {errors.first_name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.first_name.message}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  {...register("last_name")}
-                  placeholder="Last Name"
-                  className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900 "
-                />
-                {errors.last_name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.last_name.message}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  {...register("username")}
-                  placeholder="Username"
-                  className="w-[149%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
-                />
-                {errors.username && (
-                  <p className="text-red-500 text-sm mt-1 ">{errors.username.message}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="email"
-                  {...register("email")}
-                  placeholder="Email"
-                  className="w-[148%] h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                )}
-              </div>
-              <div className="relative w-[149%]">
-  <input
-    type={showPassword ? "text" : "password"}
-    {...register("password")}
-    placeholder="Password"
-    className="w-full h-16 px-4 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] placeholder-gray-400 text-gray-900 pr-12" 
-  />
-  <button
-    type="button"
-    onClick={togglePasswordVisibility}
-    className="absolute inset-y-0 right-4 flex items-center text-sm leading-5"
-  >
-    {showPassword ? (
-      <FaEyeSlash className="h-5 w-5 text-gray-500" />
-    ) : (
-      <FaEye className="h-5 w-5 text-gray-500" />
-    )}
-  </button>
-  {errors.password && (
-    <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-  )}
-</div>
-
-              <button
-                type="submit"
-                className="w-[150%] bg-[#883418] text-[#F8A11B] font-extrabold text-3xl py-5 mt-7 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] hover:bg-[#6B3E11] transition-colors"
+    <div className="flex min-h-screen items-center justify-center bg-white p-8 ml-32">
+      <Image
+        src="/images/login-illustration.png"
+        alt="Sign Up Illustration"
+        width={500}
+        height={300}
+        className="w-2/5 h-auto object-cover"
+      />
+      <div className="w-full max-w-5xl flex flex-col md:flex-row">
+        <div className="w-full md:w-2/3 md:pl-20 mb-20">
+          <h1 className="text-[40px] text-center font-bold text-[#883418] mb-8">
+            Sign Up
+          </h1>
+          <p className="text-black text-center mt-4 text-[20px] mb-8">
+            Welcome to DishHub
+          </p>
+          {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+          {successMessage && (
+            <p className="text-green-500 mb-4">{successMessage}</p>
+          )}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-8">
+              <label
+                htmlFor="first_name"
+                className="block mb-2 text-sm font-bold text-black text-[16px]"
               >
-                Sign Up
-              </button>
-            </form>
-            <p className="text-center text-2xl text-black mt-8 ml-24">
-              Already have an account? <a href="/login" className="text-[#883418] font-bold hover:underline">Login</a>
-            </p>
-          </div>
+                First Name
+              </label>
+              <input
+                type="text"
+                id="first_name"
+                {...register("first_name")}
+                className="w-full max-w-[600px] h-[50px] pl-4 py-2 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+              />
+              {errors.first_name && (
+                <p className="text-red-500 mt-2">{errors.first_name.message}</p>
+              )}
+            </div>
+         
+            <div className="mb-8">
+              <label
+                htmlFor="last_name"
+                className="block mb-2 text-sm font-bold text-black text-[16px]"
+              >
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="last_name"
+                {...register("last_name")}
+                className="w-full max-w-[600px] h-[50px] pl-4 py-2 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+              />
+              {errors.last_name && (
+                <p className="text-red-500 mt-2">{errors.last_name.message}</p>
+              )}
+            </div>
+            {/* Username Field */}
+            <div className="mb-8">
+              <label
+                htmlFor="username"
+                className="block mb-2 text-sm font-bold text-black text-[16px]"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                {...register("username")}
+                className="w-full max-w-[600px] h-[50px] pl-4 py-2 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+              />
+              {errors.username && (
+                <p className="text-red-500 mt-2">{errors.username.message}</p>
+              )}
+            </div>
+            <div className="mb-8">
+              <label
+                htmlFor="email"
+                className="block mb-2 text-sm font-bold text-black text-[16px]"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                {...register("email")}
+                className="w-full max-w-[600px] h-[50px] pl-4 py-2 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+              />
+              {errors.email && (
+                <p className="text-red-500 mt-2">{errors.email.message}</p>
+              )}
+            </div>
+          
+            <div className="mb-8">
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-bold text-black text-[16px]"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  {...register("password")}
+                  className="w-full max-w-[600px] h-[50px] pl-4 py-2 border border-black rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513]"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 mt-2">{errors.password.message}</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className={`w-full max-w-[600px] text-[#F8A11B] font-extrabold text-[25px] py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-[#8B4513] focus:ring-opacity-50 mt-6 ${
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              style={customStyles.signUpButton}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Signing up..." : "Sign Up"}
+            </button>
+          </form>
+          <p className="text-center text-[20px] text-black mt-8">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              style={customStyles.brownText}
+              className="hover:underline text-[#883418] font-bold"
+            >
+              Login
+            </Link>
+          </p>
         </div>
       </div>
     </div>
   );
-};
-
-export default SignUp;
+}

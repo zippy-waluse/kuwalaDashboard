@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { ChartOptions } from 'chart.js';
 import { Chart as ChartJS, LinearScale, CategoryScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { fetchUsers } from '@/app/utils/fetchUsers'; 
-
+import { fetchUsers } from '@/app/utils/fetchUsers';
 ChartJS.register(
   LinearScale,
   CategoryScale,
@@ -13,7 +12,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 interface UserData {
   id: number;
   email: string;
@@ -22,7 +20,6 @@ interface UserData {
   username: string;
   created_at: string;
 }
-
 interface ChartData {
   labels: string[];
   datasets: {
@@ -33,7 +30,6 @@ interface ChartData {
     borderWidth: number;
   }[];
 }
-
 const ActiveUsersChart = () => {
   const [chartData, setChartData] = useState<ChartData>({
     labels: [],
@@ -48,12 +44,11 @@ const ActiveUsersChart = () => {
     ],
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [month, setMonth] = useState<string | undefined>(undefined); 
-
+  const [month, setMonth] = useState<string | undefined>(undefined);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data: UserData[] = await fetchUsers(); 
+        const data: UserData[] = await fetchUsers();
         const processedData = processChartData(data);
         setChartData(processedData);
       } catch (error) {
@@ -63,29 +58,24 @@ const ActiveUsersChart = () => {
       }
     };
     fetchData();
-  }, [month]); 
-
+  }, [month]);
   const processChartData = (data: UserData[]) => {
     const userCountsByMonth: Record<string, number> = {
       'Jan': 0, 'Feb': 0, 'Mar': 0, 'Apr': 0, 'May': 0, 'Jun': 0,
       'Jul': 0, 'Aug': 0, 'Sep': 0, 'Oct': 0, 'Nov': 0, 'Dec': 0,
     };
-
     data.forEach(user => {
       const date = new Date(user.created_at);
       if (isNaN(date.getTime())) {
         return;
       }
-
       const month = date.toLocaleString('default', { month: 'short' });
       if (userCountsByMonth[month] !== undefined) {
         userCountsByMonth[month] += 1;
       }
     });
-
     const labels = Object.keys(userCountsByMonth);
     const counts = labels.map(label => userCountsByMonth[label]);
-
     return {
       labels,
       datasets: [
@@ -99,11 +89,9 @@ const ActiveUsersChart = () => {
       ],
     };
   };
-
   const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setMonth(event.target.value);
   };
-
   const options: ChartOptions<'bar'> = {
     plugins: {
       legend: {
@@ -113,6 +101,9 @@ const ActiveUsersChart = () => {
       title: {
         display: true,
         text: 'Total Users Per Month',
+        font: {
+          size: 16,
+        },
       },
     },
     scales: {
@@ -120,26 +111,32 @@ const ActiveUsersChart = () => {
         title: {
           display: true,
           text: 'Months',
+          font: {
+            size: 12,
+          },
         },
       },
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of Users',
+          font: {
+            size: 12,
+          },
+        },
       },
     },
   };
-
   if (isLoading) return <div>Loading chart...</div>;
-
   return (
     <div>
       <select onChange={handleMonthChange} defaultValue="">
       </select>
-
-      <div className="chart-container 2xl:h-[800px] 2xl:w-[900px] xl:h-[600px] xl:w-[800px] lg:h-[500px] lg:w-[700px] nest-hub:w-[400px] nest-hub-max:w-[2px] 2xl:pt-[8px] ipa:w-7/12 ipa:pl-5">
+      <div className="chart-container 2xl:h-[600px] 2xl:w-[700px] xl:h-[500px] xl:w-[600px] lg:h-[400px] lg:w-[500px] md:h-[350px] md:w-[450px] sm:h-[300px] sm:w-[400px] nesthub:w-[300px] nesthubmax:w-[250px] ipa:w-7/12 ipa:pl-3">
         <Bar data={chartData} options={options} />
       </div>
     </div>
   );
 };
-
 export default ActiveUsersChart;
